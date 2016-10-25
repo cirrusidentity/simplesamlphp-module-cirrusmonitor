@@ -1,0 +1,14 @@
+{
+    "name": "cirrusidentity/simplesamlphp-module-cirrusmonitor",
+    "description": "SSP Module for monitoring",
+    "type": "simplesamlphp-module",
+    "require": {
+        "php": ">5.3",
+        "simplesamlphp/composer-module-installer": "^1.1"
+    },
+    "require-dev": {
+        "simplesamlphp/simplesamlphp": "1.14",
+        "phpunit/phpunit": "~4.8",
+        "satooshi/php-coveralls": "^1.0"
+    }
+}
