@@ -3,7 +3,7 @@
     "description": "SSP Module for monitoring",
     "type": "simplesamlphp-module",
     "require": {
-        "php": ">5.3",
+        "php": ">=5.3",
         "simplesamlphp/composer-module-installer": "^1.1"
     },
     "require-dev": {
