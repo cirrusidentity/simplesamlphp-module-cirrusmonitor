@@ -4,6 +4,8 @@
  * Minimal configuration needed for testing
  */
 $config = array(
+    // It is easier to test with phps embedded webserver if run from root path
+    'baseurlpath' => '/',
     'debug' => true,
     'logging.level' => SimpleSAML_Logger::DEBUG,
     'logging.handler' => 'errorlog',

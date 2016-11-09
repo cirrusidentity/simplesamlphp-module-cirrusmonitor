@@ -36,6 +36,22 @@ SSP assumes certain files, like templates, will be in its `module` directory. Th
 into the composer installed SSP's module directory. This takes care of having the SSP autoloader find our classes and takes care of SSP
 assuming certain files are installed relative to it.
 
+## Built-In PHP Server
+
+You can test `www` functionality by used the built in php server
+
+```bash
+export SIMPLESAMLPHP_CONFIG_DIR=$PWD/tests/config
+php -S 0.0.0.0:8123 -t $PWD/vendor/simplesamlphp/simplesamlphp/www/
+```
+
+Then visit http://localhost:8123/module.php/cirrusmonitor/monitor.php or http://localhost:8123/module.php/cirrusmonitor/monitor.php/metadata 
+
+Using the php webserver makes use of two, non-obvious configuration settings: 
+
+* `config.php` has the `baseurlpath` set to `/`. Without this ssp thinks it is running under `/simplesaml` and we would need to configure a router script to alias that to root.
+* The module is symlinked into the vendor/composer installation of SSP's module directory. This ensures class loading, template resolution, etc work.
+
 ## Style Guide
 
 Code should conform to PSR-2. Exceptions are made for namespace and class names since SSP has its own autoloader and conventions.
