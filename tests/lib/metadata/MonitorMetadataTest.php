@@ -16,7 +16,15 @@ class MonitorMetadataTest extends \PHPUnit_Framework_TestCase
      */
     public function testSanity()
     {
-        $config = array();
+        $config = array(
+            'validFor' => 'P5D', //Metadata that will expire in less than this time will be an alert. See http://php.net/manual/en/dateinterval.createfromdatestring.php
+            'some-entityId' => array(
+                'source' => 'saml20-sp-remote',
+                'otherConfigOption' => 'abc'
+            ),
+            'entityId2'=> array(),
+        );
+        //isset($config['some-entityId']['source'])
         $monitorable = new \sspmod_cirrusmonitor_metadata_MonitorMetadata($config);
 
         $result = $monitorable->performCheck();
