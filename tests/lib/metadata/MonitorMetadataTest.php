@@ -22,7 +22,7 @@ class MonitorMetadataTest extends \PHPUnit_Framework_TestCase
                 'source' => 'saml20-sp-remote',
                 'otherConfigOption' => 'abc'
             ),
-            'entityId2'=> array(),
+            'entityId2' => array(),
         );
         //isset($config['some-entityId']['source'])
         $configuration = \SimpleSAML_Configuration::loadFromArray($config);
@@ -32,4 +32,32 @@ class MonitorMetadataTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(1576384259, $result);
     }
+
+    /**
+     * Test null entityIDs to check
+     */
+    public function testNoEntityIDsToCheck()
+    {
+        $config = array();
+        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
+        $monitorable = new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+
+        $this->assertNull($monitorable->getEntityIdsToCheck());
+    }
+
+    /**
+     * Test entityIDs to check
+     */
+    public function testEntityIDsToCheck()
+    {
+        $entityIDsToCheck = array('entity1.example.org', 'entity2.example.org');
+        $config = array(
+            'entityIDsToCheck' => $entityIDsToCheck
+        );
+        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
+        $monitorable = new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+
+        $this->assertEquals($entityIDsToCheck, $monitorable->getEntityIDsToCheck());
+    }
+
 }

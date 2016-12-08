@@ -4,12 +4,27 @@ class sspmod_cirrusmonitor_metadata_MonitorMetadata implements sspmod_cirrusmoni
 {
 
     /**
+     * @var array entityIDs to check
+     */
+    private $entityIDsToCheck = array();
+
+    /**
      * Initializes the Metadata Monitor
      *
      * @param SimpleSAML_Configuration $config The configuration for this output.
      */
     public function __construct(\SimpleSAML_Configuration $config)
     {
+        $this->entityIDsToCheck = $config->getArray('entityIDsToCheck', null);
+    }
+
+    /**
+     * Get the entityIDs to check
+     * @return array|null
+     */
+    public function getEntityIDsToCheck()
+    {
+        return $this->entityIDsToCheck;
     }
 
     public function performCheck()
