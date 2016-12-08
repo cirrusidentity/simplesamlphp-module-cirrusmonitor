@@ -25,7 +25,8 @@ class MonitorMetadataTest extends \PHPUnit_Framework_TestCase
             'entityId2'=> array(),
         );
         //isset($config['some-entityId']['source'])
-        $monitorable = new \sspmod_cirrusmonitor_metadata_MonitorMetadata($config);
+        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
+        $monitorable = new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
 
         $result = $monitorable->performCheck();
 

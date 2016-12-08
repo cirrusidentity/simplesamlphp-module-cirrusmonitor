@@ -3,7 +3,12 @@
 class sspmod_cirrusmonitor_metadata_MonitorMetadata implements sspmod_cirrusmonitor_Monitorable
 {
 
-    public function __construct($config)
+    /**
+     * Initializes the Metadata Monitor
+     *
+     * @param SimpleSAML_Configuration $config The configuration for this output.
+     */
+    public function __construct(\SimpleSAML_Configuration $config)
     {
     }
 
