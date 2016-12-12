@@ -68,6 +68,18 @@ class sspmod_cirrusmonitor_metadata_MonitorMetadata implements sspmod_cirrusmoni
      * @see sspmod_cirrusmonitor_metadata_MonitorMetadata::DEFAULT_VALID_FOR
      *
      * @param SimpleSAML_Configuration $config The configuration for this output.
+     *  $config = [
+     *      'validFor' => 'P5D',
+     *      'entitiesToCheck' => [
+     *          0 => [
+     *              'entityid' => 'sp.example.org',
+     *              'metadata-set' => 'saml20-sp-remote'
+     *          ],
+     *          1 => [
+     *              'entityid' => 'idp.example.org',
+     *              'metadata-set' => 'saml20-idp-remote'
+     *          ]
+     *  ]
      */
     public function __construct(\SimpleSAML_Configuration $config)
     {
@@ -105,7 +117,22 @@ class sspmod_cirrusmonitor_metadata_MonitorMetadata implements sspmod_cirrusmoni
      * Check all entities and return an array indicating whether all entities are ok or not as well as the status of
      * each entity.
      *
-     * @return array
+     * @return array Returns the status of all entities as well as each entity.
+     *      return = [
+     *          'overallStatus' => 'ok',
+     *          'perEntityStatus' => [
+     *              0 => [
+     *                  'entityid' => 'sp.example.org',
+     *                  'metadata-set' => 'saml20-sp-remote',
+     *                  'status' => 'ok'
+     *              ]
+     *              1 => [
+     *                  'entityid' => 'idp.example.org',
+     *                  'metadata-set' => 'saml20-idp-remote',
+     *                  'status' => 'ok'
+     *              ]
+     *          ]
+     *      ]
      */
     public function performCheck()
     {
@@ -122,8 +149,10 @@ class sspmod_cirrusmonitor_metadata_MonitorMetadata implements sspmod_cirrusmoni
             }
         }
 
-        return ['overallStatus' => $overallStatus,
-            'perEntityStatus' => $perEntity];
+        return [
+            'overallStatus' => $overallStatus,
+            'perEntityStatus' => $perEntity
+        ];
     }
 
     /**
@@ -132,7 +161,12 @@ class sspmod_cirrusmonitor_metadata_MonitorMetadata implements sspmod_cirrusmoni
      * @param $entityId string The entityID to check
      * @param $metadataSet string The metadata source to check
      *
-     * @return array
+     * @return array Returns the status of an entity.
+     *      return = [
+     *          'entityid' => 'sp.example.org',
+     *          'metadata-set' => 'saml20-sp-remote',
+     *          'status' => 'ok'
+     *      ]
      */
     function checkEntity($entityId, $metadataSet)
     {
