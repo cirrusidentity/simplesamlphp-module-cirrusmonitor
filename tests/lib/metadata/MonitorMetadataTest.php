@@ -10,46 +10,91 @@ class MonitorMetadataTest extends \PHPUnit_Framework_TestCase
         putenv('SIMPLESAMLPHP_CONFIG_DIR=' . dirname(dirname(__DIR__)) . '/config');
     }
 
+
     /**
-     * Test null entityIDs to check
+     * @expectedException \InvalidArgumentException
      */
-    public function testNoEntityIDsToCheck()
+    public function testMissingEntityIDsToCheck()
     {
         $config = array();
         $configuration = \SimpleSAML_Configuration::loadFromArray($config);
-        $monitor = new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
-
-        $this->assertNull($monitor->getEntityIdsToCheck());
+        new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
     }
 
     /**
-     * Test entityIDs to check
+     * @expectedException \InvalidArgumentException
      */
-    public function testEntityIDsToCheck()
+    public function testMissingEntityID()
     {
-        $entityIDsToCheck = [
-            0 => [
-                'entityid' => 'entity1.example.org',
-                'metadata-set' => 'saml20-sp-remote',
-            ],
-            1 => [
-                'entityid' => 'entity2.example.org',
-                'metadata-set' => 'saml20-sp-remote',
+        $config = [
+            'entitiesToCheck' => [
+                0 => [
+                    'metadata-set' => 'saml20-sp-remote',
+                ]
             ]
         ];
-        $config = array(
-            'entityIDsToCheck' => $entityIDsToCheck
-        );
-        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
-        $monitor = new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
 
-        $this->assertEquals($entityIDsToCheck, $monitor->getEntityIDsToCheck());
+        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
+        new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testNoStringEntityID()
+    {
+        $config = [
+            'entitiesToCheck' => [
+                0 => [
+                    'entityid' => 1,
+                    'metadata-set' => 'saml20-sp-remote'
+                ]
+            ]
+        ];
+
+        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
+        new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testMissingMetadataSource()
+    {
+        $config = [
+            'entitiesToCheck' => [
+                0 => [
+                    'entityid' => 'https://idp.example.org'
+                ]
+            ]
+        ];
+
+        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
+        new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testNoStringMetadataSource()
+    {
+        $config = [
+            'entitiesToCheck' => [
+                0 => [
+                    'entityid' => 'https://idp.example.org',
+                    'metadata-set' => 1
+                ]
+            ]
+        ];
+
+        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
+        new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
     }
 
     public function testPerformCheck()
     {
         $config = [
-            'entityIDsToCheck' => [
+            'entitiesToCheck' => [
                 0 => [
                     'entityid' => 'https://example.org',
                     'metadata-set' => 'saml20-sp-remote',
@@ -70,13 +115,13 @@ class MonitorMetadataTest extends \PHPUnit_Framework_TestCase
             'overallStatus' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::STATUS_NOT_OK,
             'perEntityStatus' => [
                 0 => [
-                    'entityid' => $config['entityIDsToCheck'][0]['entityid'],
-                    'metadata-set' => $config['entityIDsToCheck'][0]['metadata-set'],
+                    'entityid' => $config['entitiesToCheck'][0]['entityid'],
+                    'metadata-set' => $config['entitiesToCheck'][0]['metadata-set'],
                     'status' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::METADATA_OK
                 ],
                 1 => [
-                    'entityid' => $config['entityIDsToCheck'][1]['entityid'],
-                    'metadata-set' => $config['entityIDsToCheck'][1]['metadata-set'],
+                    'entityid' => $config['entitiesToCheck'][1]['entityid'],
+                    'metadata-set' => $config['entitiesToCheck'][1]['metadata-set'],
                     'status' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::METADATA_NOT_FOUND
                 ]
             ]
@@ -88,7 +133,7 @@ class MonitorMetadataTest extends \PHPUnit_Framework_TestCase
     public function testMetadataOk()
     {
         $config = [
-            'entityIDsToCheck' => [
+            'entitiesToCheck' => [
                 0 => [
                     'entityid' => 'https://example.org',
                     'metadata-set' => 'saml20-sp-remote',
@@ -105,8 +150,8 @@ class MonitorMetadataTest extends \PHPUnit_Framework_TestCase
             'overallStatus' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::STATUS_OK,
             'perEntityStatus' => [
                 0 => [
-                    'entityid' => $config['entityIDsToCheck'][0]['entityid'],
-                    'metadata-set' => $config['entityIDsToCheck'][0]['metadata-set'],
+                    'entityid' => $config['entitiesToCheck'][0]['entityid'],
+                    'metadata-set' => $config['entitiesToCheck'][0]['metadata-set'],
                     'status' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::METADATA_OK
                 ]
             ]
@@ -118,7 +163,7 @@ class MonitorMetadataTest extends \PHPUnit_Framework_TestCase
     public function testMetadataNotFound()
     {
         $config = [
-            'entityIDsToCheck' => [
+            'entitiesToCheck' => [
                 0 => [
                     'entityid' => 'https://not-found.example.org',
                     'metadata-set' => 'saml20-sp-remote',
@@ -135,8 +180,8 @@ class MonitorMetadataTest extends \PHPUnit_Framework_TestCase
             'overallStatus' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::STATUS_NOT_OK,
             'perEntityStatus' => [
                 0 => [
-                    'entityid' => $config['entityIDsToCheck'][0]['entityid'],
-                    'metadata-set' => $config['entityIDsToCheck'][0]['metadata-set'],
+                    'entityid' => $config['entitiesToCheck'][0]['entityid'],
+                    'metadata-set' => $config['entitiesToCheck'][0]['metadata-set'],
                     'status' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::METADATA_NOT_FOUND
                 ]
             ]
@@ -148,7 +193,7 @@ class MonitorMetadataTest extends \PHPUnit_Framework_TestCase
     public function testMetadataExpired()
     {
         $config = [
-            'entityIDsToCheck' => [
+            'entitiesToCheck' => [
                 0 => [
                     'entityid' => 'https://expired.example.org',
                     'metadata-set' => 'saml20-sp-remote',
@@ -165,8 +210,8 @@ class MonitorMetadataTest extends \PHPUnit_Framework_TestCase
             'overallStatus' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::STATUS_NOT_OK,
             'perEntityStatus' => [
                 0 => [
-                    'entityid' => $config['entityIDsToCheck'][0]['entityid'],
-                    'metadata-set' => $config['entityIDsToCheck'][0]['metadata-set'],
+                    'entityid' => $config['entitiesToCheck'][0]['entityid'],
+                    'metadata-set' => $config['entitiesToCheck'][0]['metadata-set'],
                     'status' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::METADATA_EXPIRED
                 ]
             ]
@@ -178,7 +223,7 @@ class MonitorMetadataTest extends \PHPUnit_Framework_TestCase
     public function testMetadataExpiring()
     {
         $config = [
-            'entityIDsToCheck' => [
+            'entitiesToCheck' => [
                 0 => [
                     'entityid' => 'https://expiring.example.org',
                     'metadata-set' => 'saml20-sp-remote',
@@ -195,8 +240,8 @@ class MonitorMetadataTest extends \PHPUnit_Framework_TestCase
             'overallStatus' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::STATUS_NOT_OK,
             'perEntityStatus' => [
                 0 => [
-                    'entityid' => $config['entityIDsToCheck'][0]['entityid'],
-                    'metadata-set' => $config['entityIDsToCheck'][0]['metadata-set'],
+                    'entityid' => $config['entitiesToCheck'][0]['entityid'],
+                    'metadata-set' => $config['entitiesToCheck'][0]['metadata-set'],
                     'status' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::METADATA_EXPIRING
                 ]
             ]
@@ -204,4 +249,96 @@ class MonitorMetadataTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($expected, $result);
     }
+
+    public function testMetadataNoExpire()
+    {
+        $config = [
+            'entitiesToCheck' => [
+                0 => [
+                    'entityid' => 'https://no-expire.example.org',
+                    'metadata-set' => 'saml20-sp-remote',
+                ]
+            ]
+        ];
+
+        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
+        $monitor = new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+
+        $result = $monitor->performCheck();
+
+        $expected = [
+            'overallStatus' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::STATUS_OK,
+            'perEntityStatus' => [
+                0 => [
+                    'entityid' => $config['entitiesToCheck'][0]['entityid'],
+                    'metadata-set' => $config['entitiesToCheck'][0]['metadata-set'],
+                    'status' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::METADATA_OK
+                ]
+            ]
+        ];
+
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testMetadataSource()
+    {
+        $config = [
+            'entitiesToCheck' => [
+                0 => [
+                    'entityid' => 'https://idp.example.org',
+                    'metadata-set' => 'saml20-idp-remote',
+                ]
+            ]
+        ];
+
+        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
+        $monitor = new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+
+        $result = $monitor->performCheck();
+
+        $expected = [
+            'overallStatus' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::STATUS_OK,
+            'perEntityStatus' => [
+                0 => [
+                    'entityid' => $config['entitiesToCheck'][0]['entityid'],
+                    'metadata-set' => $config['entitiesToCheck'][0]['metadata-set'],
+                    'status' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::METADATA_OK
+                ]
+            ]
+        ];
+
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testMetadataValidFor()
+    {
+        $config = [
+            'validFor' => 'P1D',
+            'entitiesToCheck' => [
+                0 => [
+                    'entityid' => 'https://expiring.example.org',
+                    'metadata-set' => 'saml20-sp-remote',
+                ]
+            ]
+        ];
+
+        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
+        $monitor = new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+
+        $result = $monitor->performCheck();
+
+        $expected = [
+            'overallStatus' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::STATUS_OK,
+            'perEntityStatus' => [
+                0 => [
+                    'entityid' => $config['entitiesToCheck'][0]['entityid'],
+                    'metadata-set' => $config['entitiesToCheck'][0]['metadata-set'],
+                    'status' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::METADATA_OK
+                ]
+            ]
+        ];
+
+        $this->assertEquals($expected, $result);
+    }
+
 }
