@@ -16,8 +16,62 @@ composer require cirrusidentity/simplesamlphp-module-cirrusmonitor:dev-master
 
 ## Configuration
 
-TBD
+Create `config/module_cirrusmonitor.php`
 
+```php
+$config = array(
+    'metadata' => [
+        # Ensure metadata is valid for at least 6 more days.
+        'validFor' => 'P60D',
+        'entitiesToCheck' => [
+            [
+                'entityid' => 'urn:mace:incommon:uchicago.edu',
+                'metadata-set' => 'saml20-idp-remote',
+            ],
+            [
+                'entityid' => 'https://google.cirrusidentity.com/gateway1',
+                'metadata-set' => 'saml20-idp-remote',
+            ],
+            [
+                'entityid' => 'https://standard.monitor.cirrusidentity.com',
+                'metadata-set' => 'saml20-sp-remote',
+            ]
+        ]
+    ],
+);
+```
+## Checking
+
+Visit https://hostname/module.php/cirrusmonitor/monitor.php
+Note the response will likely change in future versions.
+
+Sample response below. In the sample one entity is expiring soon, another entity id couldn't be found and the last was found and isn't expiring soon.
+
+```json
+{
+    "overallStatus": "not-ok",
+    "metadata": {
+        "overallStatus": "not-ok",
+        "perEntityStatus": [
+            {
+                "entityid": "urn:mace:incommon:uchicago.edu",
+                "metadata-set": "saml20-idp-remote",
+                "status": "expiring"
+            },
+            {
+                "entityid": "https://google.cirrusidentity.com/gateway",
+                "metadata-set": "saml20-idp-remote",
+                "status": "not-found"
+            },
+            {
+                "entityid": "https://standard.monitor.cirrusidentity.com",
+                "metadata-set": "saml20-sp-remote",
+                "status": "ok"
+            }
+        ]
+    }
+}
+```
 # Development
 
 ## PHP Version

@@ -20,8 +20,17 @@ if (array_key_exists('PATH_INFO', $_SERVER)) {
 
 $module_config = SimpleSAML_Configuration::getConfig('module_cirrusmonitor.php');
 
-$monitor = new sspmod_cirrusmonitor_metadata_MonitorMetadata($module_config);
+$monitor_config = $module_config->getConfigItem('metadata');
+$monitor = new sspmod_cirrusmonitor_metadata_MonitorMetadata($monitor_config);
 //TODO: define what a response looks like
-$response = $monitor->performCheck($component);
+$response = $monitor->performCheck();
 
-echo json_encode($response, JSON_PRETTY_PRINT);
+// At some future point there will be more monitoring classes and this would be the aggregate
+$overallResponse = [
+    'overallStatus' => $response['overallStatus'],
+    'metadata' => $response,
+];
+
+echo "<pre>";
+echo json_encode($overallResponse, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+echo "</pre>";
