@@ -22,14 +22,14 @@ Create `config/module_cirrusmonitor.php`
 $config = array(
     'metadata' => [
         # Ensure metadata is valid for at least 6 more days.
-        'validFor' => 'P60D',
+        'validFor' => 'P6D',
         'entitiesToCheck' => [
             [
                 'entityid' => 'urn:mace:incommon:uchicago.edu',
                 'metadata-set' => 'saml20-idp-remote',
             ],
             [
-                'entityid' => 'https://google.cirrusidentity.com/gateway1',
+                'entityid' => 'https://google.cirrusidentity.com/gateway',
                 'metadata-set' => 'saml20-idp-remote',
             ],
             [
