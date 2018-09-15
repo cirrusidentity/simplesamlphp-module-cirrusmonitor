@@ -2,7 +2,9 @@
 
 namespace SimpleSAML\Test\Cirrusmonitor\Test\Metadata;
 
-class MonitorMetadataTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+class MonitorMetadataTest extends TestCase
 {
 
     public static function setUpBeforeClass()

@@ -76,7 +76,7 @@ Sample response below. In the sample one entity is expiring soon, another entity
 
 ## PHP Version
 
-Module targets php 5.3 and later. This prevent use of phpunit veresions greater than 4.8.
+Module targets php7.2 and later, and SSP 1.16 and later
 
 ## SSP Integration
 
