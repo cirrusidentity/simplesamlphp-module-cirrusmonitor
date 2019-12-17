@@ -1,9 +1,16 @@
 <?php
 
+namespace SimpleSAML\Module\cirrusmonitor\metadata;
+
+use SimpleSAML\Configuration;
+use SimpleSAML\Error\MetadataNotFound;
+use SimpleSAML\Metadata\MetaDataStorageHandler;
+use SimpleSAML\Module\cirrusmonitor\Monitorable;
+
 /**
  * Checks metadata and returns whether the metadata is ok, expired, will soon expire, or is unable to be found.
  */
-class sspmod_cirrusmonitor_metadata_MonitorMetadata implements sspmod_cirrusmonitor_Monitorable
+class MonitorMetadata implements Monitorable
 {
 
     /**
@@ -42,7 +49,7 @@ class sspmod_cirrusmonitor_metadata_MonitorMetadata implements sspmod_cirrusmoni
     const DEFAULT_VALID_FOR = 'P5D';
 
     /**
-     * @var SimpleSAML_Configuration The configuration.
+     * @var Configuration The configuration.
      */
     private $configuration = null;
 
@@ -67,7 +74,7 @@ class sspmod_cirrusmonitor_metadata_MonitorMetadata implements sspmod_cirrusmoni
      *
      * @see sspmod_cirrusmonitor_metadata_MonitorMetadata::DEFAULT_VALID_FOR
      *
-     * @param SimpleSAML_Configuration $config The configuration for this output.
+     * @param Configuration $config The configuration for this output.
      *  $config = [
      *      'validFor' => 'P5D',
      *      'entitiesToCheck' => [
@@ -81,27 +88,27 @@ class sspmod_cirrusmonitor_metadata_MonitorMetadata implements sspmod_cirrusmoni
      *          ]
      *  ]
      */
-    public function __construct(\SimpleSAML_Configuration $config)
+    public function __construct(Configuration $config)
     {
         // save the configuration
         $this->configuration = $config;
 
         // validate config
         if (!$config->hasValue('entitiesToCheck')) {
-            throw new InvalidArgumentException("Missing required 'entitiesToCheck' array");
+            throw new \InvalidArgumentException("Missing required 'entitiesToCheck' array");
         }
         foreach ($config->getArray('entitiesToCheck') as $entityToCheck) {
             if (!isset($entityToCheck['entityid'])) {
-                throw new InvalidArgumentException("Missing required 'entityid'");
+                throw new \InvalidArgumentException("Missing required 'entityid'");
             }
             if (!isset($entityToCheck['metadata-set'])) {
-                throw new InvalidArgumentException("Missing required 'metadata-set'");
+                throw new \InvalidArgumentException("Missing required 'metadata-set'");
             }
             if (!is_string($entityToCheck['entityid'])) {
-                throw new InvalidArgumentException('entityid is not a string');
+                throw new \InvalidArgumentException('entityid is not a string');
             }
             if (!is_string($entityToCheck['metadata-set'])) {
-                throw new InvalidArgumentException('metadata-set is not a string');
+                throw new \InvalidArgumentException('metadata-set is not a string');
             }
         }
 
@@ -170,7 +177,7 @@ class sspmod_cirrusmonitor_metadata_MonitorMetadata implements sspmod_cirrusmoni
      */
     function checkEntity($entityId, $metadataSet)
     {
-        $metadataHandler = SimpleSAML_Metadata_MetaDataStorageHandler::getMetadataHandler();
+        $metadataHandler = MetaDataStorageHandler::getMetadataHandler();
 
         $status = self::METADATA_OK;
         try {
@@ -181,9 +188,9 @@ class sspmod_cirrusmonitor_metadata_MonitorMetadata implements sspmod_cirrusmoni
             if ($expire !== null && $expire < $this->validFor) {
                 $status = self::METADATA_EXPIRING;
             }
-        } catch (SimpleSAML_Error_MetadataNotFound $e) {
+        } catch (MetadataNotFound $e) {
             $status = self::METADATA_NOT_FOUND;
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $status = self::METADATA_EXPIRED;
         }
 

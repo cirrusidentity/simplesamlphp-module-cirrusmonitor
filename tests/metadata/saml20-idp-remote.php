@@ -4,4 +4,3 @@ $metadata['https://idp.example.org'] = [
     'metadata-set' => 'saml20-idp-remote',
     'expire' => \SimpleSAML\Utils\Time::parseDuration("P7D"),
 ];
-

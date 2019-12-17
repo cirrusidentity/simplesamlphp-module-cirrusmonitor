@@ -1,6 +1,7 @@
 <?php
+namespace SimpleSAML\Module\cirrusmonitor;
 
-interface sspmod_cirrusmonitor_Monitorable
+interface Monitorable
 {
 
 

@@ -1,6 +1,8 @@
 <?php
 
-class sspmod_cirrusmonitor_Monitor
+namespace SimpleSAML\Module\cirrusmonitor;
+
+class Monitor
 {
 
     public function __construct($config)

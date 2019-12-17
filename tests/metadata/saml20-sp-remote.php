@@ -3,7 +3,7 @@
 $metadata['https://example.org'] = [
     'entityid' => 'https://example.org',
     'metadata-set' => 'saml20-sp-remote',
-    'expire' => 1576384259,
+    'expire' => 1776384259,
 ];
 
 $metadata['https://expired.example.org'] = [

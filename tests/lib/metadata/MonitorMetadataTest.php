@@ -3,6 +3,8 @@
 namespace SimpleSAML\Test\Cirrusmonitor\Test\Metadata;
 
 use PHPUnit\Framework\TestCase;
+use SimpleSAML\Configuration;
+use SimpleSAML\Module\cirrusmonitor\metadata\MonitorMetadata;
 
 class MonitorMetadataTest extends TestCase
 {
@@ -19,8 +21,8 @@ class MonitorMetadataTest extends TestCase
     public function testMissingEntityIDsToCheck()
     {
         $config = array();
-        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
-        new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+        $configuration = Configuration::loadFromArray($config);
+        new MonitorMetadata($configuration);
     }
 
     /**
@@ -36,8 +38,8 @@ class MonitorMetadataTest extends TestCase
             ]
         ];
 
-        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
-        new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+        $configuration = Configuration::loadFromArray($config);
+        new MonitorMetadata($configuration);
     }
 
     /**
@@ -54,8 +56,8 @@ class MonitorMetadataTest extends TestCase
             ]
         ];
 
-        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
-        new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+        $configuration = Configuration::loadFromArray($config);
+        new MonitorMetadata($configuration);
     }
 
     /**
@@ -71,8 +73,8 @@ class MonitorMetadataTest extends TestCase
             ]
         ];
 
-        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
-        new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+        $configuration = Configuration::loadFromArray($config);
+        new MonitorMetadata($configuration);
     }
 
     /**
@@ -89,8 +91,8 @@ class MonitorMetadataTest extends TestCase
             ]
         ];
 
-        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
-        new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+        $configuration = Configuration::loadFromArray($config);
+        new MonitorMetadata($configuration);
     }
 
     public function testPerformCheck()
@@ -108,23 +110,23 @@ class MonitorMetadataTest extends TestCase
             ]
         ];
 
-        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
-        $monitor = new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+        $configuration = Configuration::loadFromArray($config);
+        $monitor = new MonitorMetadata($configuration);
 
         $result = $monitor->performCheck();
 
         $expected = [
-            'overallStatus' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::STATUS_NOT_OK,
+            'overallStatus' => MonitorMetadata::STATUS_NOT_OK,
             'perEntityStatus' => [
                 [
                     'entityid' => $config['entitiesToCheck'][0]['entityid'],
                     'metadata-set' => $config['entitiesToCheck'][0]['metadata-set'],
-                    'status' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::METADATA_OK
+                    'status' => MonitorMetadata::METADATA_OK
                 ],
                 [
                     'entityid' => $config['entitiesToCheck'][1]['entityid'],
                     'metadata-set' => $config['entitiesToCheck'][1]['metadata-set'],
-                    'status' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::METADATA_NOT_FOUND
+                    'status' => MonitorMetadata::METADATA_NOT_FOUND
                 ]
             ]
         ];
@@ -143,18 +145,18 @@ class MonitorMetadataTest extends TestCase
             ]
         ];
 
-        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
-        $monitor = new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+        $configuration = Configuration::loadFromArray($config);
+        $monitor = new MonitorMetadata($configuration);
 
         $result = $monitor->performCheck();
 
         $expected = [
-            'overallStatus' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::STATUS_OK,
+            'overallStatus' => MonitorMetadata::STATUS_OK,
             'perEntityStatus' => [
                 [
                     'entityid' => $config['entitiesToCheck'][0]['entityid'],
                     'metadata-set' => $config['entitiesToCheck'][0]['metadata-set'],
-                    'status' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::METADATA_OK
+                    'status' => MonitorMetadata::METADATA_OK
                 ]
             ]
         ];
@@ -173,18 +175,18 @@ class MonitorMetadataTest extends TestCase
             ]
         ];
 
-        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
-        $monitor = new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+        $configuration = Configuration::loadFromArray($config);
+        $monitor = new MonitorMetadata($configuration);
 
         $result = $monitor->performCheck();
 
         $expected = [
-            'overallStatus' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::STATUS_NOT_OK,
+            'overallStatus' => MonitorMetadata::STATUS_NOT_OK,
             'perEntityStatus' => [
                 [
                     'entityid' => $config['entitiesToCheck'][0]['entityid'],
                     'metadata-set' => $config['entitiesToCheck'][0]['metadata-set'],
-                    'status' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::METADATA_NOT_FOUND
+                    'status' => MonitorMetadata::METADATA_NOT_FOUND
                 ]
             ]
         ];
@@ -203,18 +205,18 @@ class MonitorMetadataTest extends TestCase
             ]
         ];
 
-        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
-        $monitor = new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+        $configuration = Configuration::loadFromArray($config);
+        $monitor = new MonitorMetadata($configuration);
 
         $result = $monitor->performCheck();
 
         $expected = [
-            'overallStatus' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::STATUS_NOT_OK,
+            'overallStatus' => MonitorMetadata::STATUS_NOT_OK,
             'perEntityStatus' => [
                 [
                     'entityid' => $config['entitiesToCheck'][0]['entityid'],
                     'metadata-set' => $config['entitiesToCheck'][0]['metadata-set'],
-                    'status' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::METADATA_EXPIRED
+                    'status' => MonitorMetadata::METADATA_EXPIRED
                 ]
             ]
         ];
@@ -233,18 +235,18 @@ class MonitorMetadataTest extends TestCase
             ]
         ];
 
-        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
-        $monitor = new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+        $configuration = Configuration::loadFromArray($config);
+        $monitor = new MonitorMetadata($configuration);
 
         $result = $monitor->performCheck();
 
         $expected = [
-            'overallStatus' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::STATUS_NOT_OK,
+            'overallStatus' => MonitorMetadata::STATUS_NOT_OK,
             'perEntityStatus' => [
                 [
                     'entityid' => $config['entitiesToCheck'][0]['entityid'],
                     'metadata-set' => $config['entitiesToCheck'][0]['metadata-set'],
-                    'status' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::METADATA_EXPIRING
+                    'status' => MonitorMetadata::METADATA_EXPIRING
                 ]
             ]
         ];
@@ -263,18 +265,18 @@ class MonitorMetadataTest extends TestCase
             ]
         ];
 
-        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
-        $monitor = new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+        $configuration = Configuration::loadFromArray($config);
+        $monitor = new MonitorMetadata($configuration);
 
         $result = $monitor->performCheck();
 
         $expected = [
-            'overallStatus' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::STATUS_OK,
+            'overallStatus' => MonitorMetadata::STATUS_OK,
             'perEntityStatus' => [
                 [
                     'entityid' => $config['entitiesToCheck'][0]['entityid'],
                     'metadata-set' => $config['entitiesToCheck'][0]['metadata-set'],
-                    'status' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::METADATA_OK
+                    'status' => MonitorMetadata::METADATA_OK
                 ]
             ]
         ];
@@ -293,18 +295,18 @@ class MonitorMetadataTest extends TestCase
             ]
         ];
 
-        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
-        $monitor = new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+        $configuration = Configuration::loadFromArray($config);
+        $monitor = new MonitorMetadata($configuration);
 
         $result = $monitor->performCheck();
 
         $expected = [
-            'overallStatus' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::STATUS_OK,
+            'overallStatus' => MonitorMetadata::STATUS_OK,
             'perEntityStatus' => [
                 [
                     'entityid' => $config['entitiesToCheck'][0]['entityid'],
                     'metadata-set' => $config['entitiesToCheck'][0]['metadata-set'],
-                    'status' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::METADATA_OK
+                    'status' => MonitorMetadata::METADATA_OK
                 ]
             ]
         ];
@@ -324,23 +326,22 @@ class MonitorMetadataTest extends TestCase
             ]
         ];
 
-        $configuration = \SimpleSAML_Configuration::loadFromArray($config);
-        $monitor = new \sspmod_cirrusmonitor_metadata_MonitorMetadata($configuration);
+        $configuration = Configuration::loadFromArray($config);
+        $monitor = new MonitorMetadata($configuration);
 
         $result = $monitor->performCheck();
 
         $expected = [
-            'overallStatus' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::STATUS_OK,
+            'overallStatus' => MonitorMetadata::STATUS_OK,
             'perEntityStatus' => [
                 [
                     'entityid' => $config['entitiesToCheck'][0]['entityid'],
                     'metadata-set' => $config['entitiesToCheck'][0]['metadata-set'],
-                    'status' => \sspmod_cirrusmonitor_metadata_MonitorMetadata::METADATA_OK
+                    'status' => MonitorMetadata::METADATA_OK
                 ]
             ]
         ];
 
         $this->assertEquals($expected, $result);
     }
-
 }
