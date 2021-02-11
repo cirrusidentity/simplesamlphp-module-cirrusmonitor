@@ -4,7 +4,8 @@
     "type": "simplesamlphp-module",
     "require": {
         "php" : ">= 7.2",
-        "simplesamlphp/composer-module-installer": "^1.1"
+        "simplesamlphp/composer-module-installer": "^1.1",
+        "ext-json": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "^7.3",

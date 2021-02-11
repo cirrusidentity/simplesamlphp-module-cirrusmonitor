@@ -2,10 +2,13 @@
 
 namespace SimpleSAML\Module\cirrusmonitor\metadata;
 
+use Exception;
+use InvalidArgumentException;
 use SimpleSAML\Configuration;
 use SimpleSAML\Error\MetadataNotFound;
 use SimpleSAML\Metadata\MetaDataStorageHandler;
 use SimpleSAML\Module\cirrusmonitor\Monitorable;
+use SimpleSAML\Utils\Time;
 
 /**
  * Checks metadata and returns whether the metadata is ok, expired, will soon expire, or is unable to be found.
@@ -51,7 +54,7 @@ class MonitorMetadata implements Monitorable
     /**
      * @var Configuration The configuration.
      */
-    private $configuration = null;
+    private $configuration;
 
     /**
      * @var array Entities whose metadata will be checked.
@@ -72,8 +75,6 @@ class MonitorMetadata implements Monitorable
      * The configuration array may have a 'validFor' duration which defines the interval during which metadata is
      * considered to be 'expiring'. If not specified, the default value of 'validFor' will be used.
      *
-     * @see sspmod_cirrusmonitor_metadata_MonitorMetadata::DEFAULT_VALID_FOR
-     *
      * @param Configuration $config The configuration for this output.
      *  $config = [
      *      'validFor' => 'P5D',
@@ -87,6 +88,9 @@ class MonitorMetadata implements Monitorable
      *              'metadata-set' => 'saml20-idp-remote'
      *          ]
      *  ]
+     * @throws InvalidArgumentException|Exception if config is missing required options
+     *@see sspmod_cirrusmonitor_metadata_MonitorMetadata::DEFAULT_VALID_FOR
+     *
      */
     public function __construct(Configuration $config)
     {
@@ -95,20 +99,20 @@ class MonitorMetadata implements Monitorable
 
         // validate config
         if (!$config->hasValue('entitiesToCheck')) {
-            throw new \InvalidArgumentException("Missing required 'entitiesToCheck' array");
+            throw new InvalidArgumentException("Missing required 'entitiesToCheck' array");
         }
         foreach ($config->getArray('entitiesToCheck') as $entityToCheck) {
             if (!isset($entityToCheck['entityid'])) {
-                throw new \InvalidArgumentException("Missing required 'entityid'");
+                throw new InvalidArgumentException("Missing required 'entityid'");
             }
             if (!isset($entityToCheck['metadata-set'])) {
-                throw new \InvalidArgumentException("Missing required 'metadata-set'");
+                throw new InvalidArgumentException("Missing required 'metadata-set'");
             }
             if (!is_string($entityToCheck['entityid'])) {
-                throw new \InvalidArgumentException('entityid is not a string');
+                throw new InvalidArgumentException('entityid is not a string');
             }
             if (!is_string($entityToCheck['metadata-set'])) {
-                throw new \InvalidArgumentException('metadata-set is not a string');
+                throw new InvalidArgumentException('metadata-set is not a string');
             }
         }
 
@@ -117,7 +121,7 @@ class MonitorMetadata implements Monitorable
 
         // convert validFor duration to a timestamp
         $configValidFor = $this->configuration->getString('validFor', self::DEFAULT_VALID_FOR);
-        $this->validFor = \SimpleSAML\Utils\Time::parseDuration($configValidFor);
+        $this->validFor = Time::parseDuration($configValidFor);
     }
 
     /**
@@ -147,7 +151,8 @@ class MonitorMetadata implements Monitorable
         $perEntity = array();
 
         foreach ($this->entitiesToCheck as $entityToCheck) {
-            $perEntityResult = $this->checkEntity($entityToCheck['entityid'], $entityToCheck['metadata-set']);
+            $validFor = array_key_exists('validFor', $entityToCheck) ? Time::parseDuration($entityToCheck['validFor']) : $this->validFor;
+            $perEntityResult = $this->checkEntity($entityToCheck['entityid'], $entityToCheck['metadata-set'], $validFor);
 
             array_push($perEntity, $perEntityResult);
 
@@ -167,6 +172,7 @@ class MonitorMetadata implements Monitorable
      *
      * @param $entityId string The entityID to check
      * @param $metadataSet string The metadata source to check
+     * @param int $validFor Seconds the metadata should be valid for
      *
      * @return array Returns the status of an entity.
      *      return = [
@@ -175,7 +181,7 @@ class MonitorMetadata implements Monitorable
      *          'status' => 'ok'
      *      ]
      */
-    function checkEntity($entityId, $metadataSet)
+    private function checkEntity(string $entityId, string $metadataSet, int $validFor)
     {
         $metadataHandler = MetaDataStorageHandler::getMetadataHandler();
 
@@ -185,12 +191,12 @@ class MonitorMetadata implements Monitorable
 
             $expire = $metadata->getInteger('expire', null);
 
-            if ($expire !== null && $expire < $this->validFor) {
+            if ($expire !== null && $expire < $validFor) {
                 $status = self::METADATA_EXPIRING;
             }
         } catch (MetadataNotFound $e) {
             $status = self::METADATA_NOT_FOUND;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $status = self::METADATA_EXPIRED;
         }
 

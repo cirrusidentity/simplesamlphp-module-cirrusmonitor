@@ -2,6 +2,7 @@
 
 namespace SimpleSAML\Test\Cirrusmonitor\Test\Metadata;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use SimpleSAML\Configuration;
 use SimpleSAML\Module\cirrusmonitor\metadata\MonitorMetadata;
@@ -15,21 +16,17 @@ class MonitorMetadataTest extends TestCase
     }
 
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testMissingEntityIDsToCheck()
     {
+        $this->expectException(InvalidArgumentException::class);
         $config = array();
         $configuration = Configuration::loadFromArray($config);
         new MonitorMetadata($configuration);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testMissingEntityID()
     {
+        $this->expectException(InvalidArgumentException::class);
         $config = [
             'entitiesToCheck' => [
                 [
@@ -42,11 +39,9 @@ class MonitorMetadataTest extends TestCase
         new MonitorMetadata($configuration);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testNoStringEntityID()
     {
+        $this->expectException(InvalidArgumentException::class);
         $config = [
             'entitiesToCheck' => [
                 [
@@ -60,11 +55,9 @@ class MonitorMetadataTest extends TestCase
         new MonitorMetadata($configuration);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testMissingMetadataSource()
     {
+        $this->expectException(InvalidArgumentException::class);
         $config = [
             'entitiesToCheck' => [
                 [
@@ -77,11 +70,9 @@ class MonitorMetadataTest extends TestCase
         new MonitorMetadata($configuration);
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     */
     public function testNoStringMetadataSource()
     {
+        $this->expectException(InvalidArgumentException::class);
         $config = [
             'entitiesToCheck' => [
                 [
@@ -247,6 +238,37 @@ class MonitorMetadataTest extends TestCase
                     'entityid' => $config['entitiesToCheck'][0]['entityid'],
                     'metadata-set' => $config['entitiesToCheck'][0]['metadata-set'],
                     'status' => MonitorMetadata::METADATA_EXPIRING
+                ]
+            ]
+        ];
+
+        $this->assertEquals($expected, $result);
+    }
+
+    public function testMetadataExpiringButShortWindowMakesItOkay()
+    {
+        $config = [
+            'entitiesToCheck' => [
+                [
+                    'entityid' => 'https://expiring.example.org',
+                    'metadata-set' => 'saml20-sp-remote',
+                    'validFor' => 'P2D'
+                ]
+            ]
+        ];
+
+        $configuration = Configuration::loadFromArray($config);
+        $monitor = new MonitorMetadata($configuration);
+
+        $result = $monitor->performCheck();
+
+        $expected = [
+            'overallStatus' => MonitorMetadata::STATUS_OK,
+            'perEntityStatus' => [
+                [
+                    'entityid' => $config['entitiesToCheck'][0]['entityid'],
+                    'metadata-set' => $config['entitiesToCheck'][0]['metadata-set'],
+                    'status' => MonitorMetadata::METADATA_OK
                 ]
             ]
         ];
