@@ -16,5 +16,17 @@
         "allow-plugins": {
             "simplesamlphp/composer-module-installer": true
         }
-    }
+    },
+  "scripts": {
+    "quality": [
+      "vendor/bin/phpunit --no-coverage",
+      "vendor/bin/phpcs -p",
+      "vendor/bin/psalm --clear-cache",
+      "vendor/bin/psalm --use-baseline=psalm-baseline.xml"
+    ],
+    "tests": [
+      "vendor/bin/phpunit --no-coverage"
+    ]
+  }
+    
 }

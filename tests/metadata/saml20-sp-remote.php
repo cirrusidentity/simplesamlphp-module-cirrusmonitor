@@ -1,6 +1,7 @@
 <?php
 
 use SimpleSAML\Utils\Time;
+
 $time = new Time();
 $metadata['https://example.org'] = [
     'entityid' => 'https://example.org',

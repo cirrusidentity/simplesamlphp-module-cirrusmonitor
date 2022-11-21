@@ -15,56 +15,55 @@ use SimpleSAML\Utils\Time;
  */
 class MonitorMetadata implements Monitorable
 {
-
     /**
      * @var string Indicates that metadata is expired.
      */
-    const METADATA_EXPIRED = 'expired';
+    public const METADATA_EXPIRED = 'expired';
 
     /**
      * @var string Indicates that metadata will soon expire.
      */
-    const METADATA_EXPIRING = 'expiring';
+    public const METADATA_EXPIRING = 'expiring';
 
     /**
      * @var string Indicates that metadata can not be found.
      */
-    const METADATA_NOT_FOUND = 'not-found';
+    public const METADATA_NOT_FOUND = 'not-found';
 
     /**
      * @var string Indicates that metadata is not expired nor will soon expire.
      */
-    const METADATA_OK = 'ok';
+    public const METADATA_OK = 'ok';
 
     /**
      * @var string Indicates that all checked metadata is not expired nor will soon expire.
      */
-    const STATUS_OK = 'ok';
+    public const STATUS_OK = 'ok';
 
     /**
      * @var string Indicates that all or some checked metadata is either expired, will soon expire, or is not found.
      */
-    const STATUS_NOT_OK = 'not-ok';
+    public const STATUS_NOT_OK = 'not-ok';
 
     /**
      * @var string Default duration during which metadata will be considered soon-to-expire, i.e. 'expiring'
      */
-    const DEFAULT_VALID_FOR = 'P5D';
+    public const DEFAULT_VALID_FOR = 'P5D';
 
     /**
      * @var Configuration The configuration.
      */
-    private $configuration;
+    private Configuration $configuration;
 
     /**
      * @var array Entities whose metadata will be checked.
      */
-    private $entitiesToCheck = array();
+    private array $entitiesToCheck = array();
 
     /**
      * @var int Timestamp before which metadata is considered to be 'expiring'.
      */
-    private $validFor = 0;
+    private int $validFor = 0;
 
     /**
      * Initializes the Metadata Monitor.
@@ -151,8 +150,14 @@ class MonitorMetadata implements Monitorable
         $perEntity = array();
 
         foreach ($this->entitiesToCheck as $entityToCheck) {
-            $validFor = array_key_exists('validFor', $entityToCheck) ? (new Time())->parseDuration($entityToCheck['validFor']) : $this->validFor;
-            $perEntityResult = $this->checkEntity($entityToCheck['entityid'], $entityToCheck['metadata-set'], $validFor);
+            $validFor = array_key_exists('validFor', $entityToCheck) ? (new Time())->parseDuration(
+                $entityToCheck['validFor']
+            ) : $this->validFor;
+            $perEntityResult = $this->checkEntity(
+                $entityToCheck['entityid'],
+                $entityToCheck['metadata-set'],
+                $validFor
+            );
 
             array_push($perEntity, $perEntityResult);
 

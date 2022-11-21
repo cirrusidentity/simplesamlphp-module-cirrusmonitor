@@ -9,7 +9,6 @@ use SimpleSAML\Module\cirrusmonitor\metadata\MonitorMetadata;
 
 class MonitorMetadataTest extends TestCase
 {
-
     public static function setUpBeforeClass(): void
     {
         putenv('SIMPLESAMLPHP_CONFIG_DIR=' . dirname(__DIR__, 2) . '/config');
