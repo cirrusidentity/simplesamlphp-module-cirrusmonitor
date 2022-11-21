@@ -120,8 +120,8 @@ class MonitorMetadata implements Monitorable
         $this->entitiesToCheck = $config->getArray('entitiesToCheck');
 
         // convert validFor duration to a timestamp
-        $configValidFor = $this->configuration->getString('validFor', self::DEFAULT_VALID_FOR);
-        $this->validFor = Time::parseDuration($configValidFor);
+        $configValidFor = $this->configuration->getOptionalString('validFor', self::DEFAULT_VALID_FOR);
+        $this->validFor = (new Time())->parseDuration($configValidFor);
     }
 
     /**
@@ -151,7 +151,7 @@ class MonitorMetadata implements Monitorable
         $perEntity = array();
 
         foreach ($this->entitiesToCheck as $entityToCheck) {
-            $validFor = array_key_exists('validFor', $entityToCheck) ? Time::parseDuration($entityToCheck['validFor']) : $this->validFor;
+            $validFor = array_key_exists('validFor', $entityToCheck) ? (new Time())->parseDuration($entityToCheck['validFor']) : $this->validFor;
             $perEntityResult = $this->checkEntity($entityToCheck['entityid'], $entityToCheck['metadata-set'], $validFor);
 
             array_push($perEntity, $perEntityResult);
@@ -189,7 +189,7 @@ class MonitorMetadata implements Monitorable
         try {
             $metadata = $metadataHandler->getMetaDataConfig($entityId, $metadataSet);
 
-            $expire = $metadata->getInteger('expire', null);
+            $expire = $metadata->getOptionalInteger('expire', null);
 
             if ($expire !== null && $expire < $validFor) {
                 $status = self::METADATA_EXPIRING;

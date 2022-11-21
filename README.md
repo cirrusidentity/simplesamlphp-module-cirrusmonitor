@@ -76,7 +76,7 @@ Sample response below. In the sample one entity is expiring soon, another entity
 
 ## PHP Version
 
-Module targets php7.2 and later, and SSP 1.16 and later
+Module targets php8.1 and later, and SSP 2 and later
 
 ## SSP Integration
 
