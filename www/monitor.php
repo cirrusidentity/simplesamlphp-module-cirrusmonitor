@@ -10,10 +10,6 @@
 use SimpleSAML\Configuration;
 use SimpleSAML\Module\cirrusmonitor\metadata\MonitorMetadata;
 
-$component = 'ALL';
-if (array_key_exists('PATH_INFO', $_SERVER)) {
-    $component = substr($_SERVER['PATH_INFO'], 1);
-}
 
 /* TODO: we may want to do this as a hook: SimpleSAML\Module::callHooks('cirrusmonitor', $someParams);
  *

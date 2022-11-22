@@ -15,7 +15,7 @@ class MonitorMetadataTest extends TestCase
     }
 
 
-    public function testMissingEntityIDsToCheck()
+    public function testMissingEntityIDsToCheck(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $config = array();
@@ -23,7 +23,7 @@ class MonitorMetadataTest extends TestCase
         new MonitorMetadata($configuration);
     }
 
-    public function testMissingEntityID()
+    public function testMissingEntityID(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $config = [
@@ -38,7 +38,7 @@ class MonitorMetadataTest extends TestCase
         new MonitorMetadata($configuration);
     }
 
-    public function testNoStringEntityID()
+    public function testNoStringEntityID(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $config = [
@@ -54,7 +54,7 @@ class MonitorMetadataTest extends TestCase
         new MonitorMetadata($configuration);
     }
 
-    public function testMissingMetadataSource()
+    public function testMissingMetadataSource(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $config = [
@@ -69,7 +69,7 @@ class MonitorMetadataTest extends TestCase
         new MonitorMetadata($configuration);
     }
 
-    public function testNoStringMetadataSource()
+    public function testNoStringMetadataSource(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $config = [
@@ -85,7 +85,7 @@ class MonitorMetadataTest extends TestCase
         new MonitorMetadata($configuration);
     }
 
-    public function testPerformCheck()
+    public function testPerformCheck(): void
     {
         $config = [
             'entitiesToCheck' => [
@@ -124,7 +124,7 @@ class MonitorMetadataTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testMetadataOk()
+    public function testMetadataOk(): void
     {
         $config = [
             'entitiesToCheck' => [
@@ -154,7 +154,7 @@ class MonitorMetadataTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testMetadataNotFound()
+    public function testMetadataNotFound(): void
     {
         $config = [
             'entitiesToCheck' => [
@@ -184,7 +184,7 @@ class MonitorMetadataTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testMetadataExpired()
+    public function testMetadataExpired(): void
     {
         $config = [
             'entitiesToCheck' => [
@@ -214,7 +214,7 @@ class MonitorMetadataTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testMetadataExpiring()
+    public function testMetadataExpiring(): void
     {
         $config = [
             'entitiesToCheck' => [
@@ -244,7 +244,7 @@ class MonitorMetadataTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testMetadataExpiringButShortWindowMakesItOkay()
+    public function testMetadataExpiringButShortWindowMakesItOkay(): void
     {
         $config = [
             'entitiesToCheck' => [
@@ -275,7 +275,7 @@ class MonitorMetadataTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testMetadataNoExpire()
+    public function testMetadataNoExpire(): void
     {
         $config = [
             'entitiesToCheck' => [
@@ -305,7 +305,7 @@ class MonitorMetadataTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testMetadataSource()
+    public function testMetadataSource(): void
     {
         $config = [
             'entitiesToCheck' => [
@@ -335,7 +335,7 @@ class MonitorMetadataTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
-    public function testMetadataValidFor()
+    public function testMetadataValidFor(): void
     {
         $config = [
             'validFor' => 'P1D',

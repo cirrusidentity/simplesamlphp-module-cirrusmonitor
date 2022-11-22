@@ -56,9 +56,9 @@ class MonitorMetadata implements Monitorable
     private Configuration $configuration;
 
     /**
-     * @var array Entities whose metadata will be checked.
+     * @var CheckableMetadataEntity[] Entities whose metadata will be checked.
      */
-    private array $entitiesToCheck = array();
+    private array $entitiesToCheck = [];
 
     /**
      * @var int Timestamp before which metadata is considered to be 'expiring'.
@@ -100,23 +100,10 @@ class MonitorMetadata implements Monitorable
         if (!$config->hasValue('entitiesToCheck')) {
             throw new InvalidArgumentException("Missing required 'entitiesToCheck' array");
         }
+        /** @var array $entityToCheck */
         foreach ($config->getArray('entitiesToCheck') as $entityToCheck) {
-            if (!isset($entityToCheck['entityid'])) {
-                throw new InvalidArgumentException("Missing required 'entityid'");
-            }
-            if (!isset($entityToCheck['metadata-set'])) {
-                throw new InvalidArgumentException("Missing required 'metadata-set'");
-            }
-            if (!is_string($entityToCheck['entityid'])) {
-                throw new InvalidArgumentException('entityid is not a string');
-            }
-            if (!is_string($entityToCheck['metadata-set'])) {
-                throw new InvalidArgumentException('metadata-set is not a string');
-            }
+            $this->entitiesToCheck[] = CheckableMetadataEntity::fromArray($entityToCheck);
         }
-
-        // save the entities to check
-        $this->entitiesToCheck = $config->getArray('entitiesToCheck');
 
         // convert validFor duration to a timestamp
         $configValidFor = $this->configuration->getOptionalString('validFor', self::DEFAULT_VALID_FOR);
@@ -144,22 +131,19 @@ class MonitorMetadata implements Monitorable
      *          ]
      *      ]
      */
-    public function performCheck()
+    public function performCheck(): array
     {
         $overallStatus = self::STATUS_OK;
         $perEntity = array();
 
         foreach ($this->entitiesToCheck as $entityToCheck) {
-            $validFor = array_key_exists('validFor', $entityToCheck) ? (new Time())->parseDuration(
-                $entityToCheck['validFor']
-            ) : $this->validFor;
             $perEntityResult = $this->checkEntity(
-                $entityToCheck['entityid'],
-                $entityToCheck['metadata-set'],
-                $validFor
+                $entityToCheck->getEntityId(),
+                $entityToCheck->getMetadataSet(),
+                $entityToCheck->getValidFor() ?? $this->validFor
             );
 
-            array_push($perEntity, $perEntityResult);
+            $perEntity[] = $perEntityResult;
 
             if ($perEntityResult['status'] !== self::METADATA_OK) {
                 $overallStatus = self::STATUS_NOT_OK;
@@ -186,7 +170,7 @@ class MonitorMetadata implements Monitorable
      *          'status' => 'ok'
      *      ]
      */
-    private function checkEntity(string $entityId, string $metadataSet, int $validFor)
+    private function checkEntity(string $entityId, string $metadataSet, int $validFor): array
     {
         $metadataHandler = MetaDataStorageHandler::getMetadataHandler();
 
@@ -194,14 +178,14 @@ class MonitorMetadata implements Monitorable
         try {
             $metadata = $metadataHandler->getMetaDataConfig($entityId, $metadataSet);
 
+            /** @var ?int $expire */
             $expire = $metadata->getOptionalInteger('expire', null);
-
-            if ($expire !== null && $expire < $validFor) {
+            if (!is_null($expire) && $expire < $validFor) {
                 $status = self::METADATA_EXPIRING;
             }
-        } catch (MetadataNotFound $e) {
+        } catch (MetadataNotFound) {
             $status = self::METADATA_NOT_FOUND;
-        } catch (Exception $e) {
+        } catch (Exception) {
             $status = self::METADATA_EXPIRED;
         }
 

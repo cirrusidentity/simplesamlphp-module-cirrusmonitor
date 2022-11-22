@@ -10,7 +10,8 @@
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",
-        "simplesamlphp/simplesamlphp-test-framework": "^1.2"
+        "simplesamlphp/simplesamlphp-test-framework": "^1.2",
+        "psalm/plugin-phpunit": "^0.18.3"
     },
     "config": {
         "allow-plugins": {
@@ -22,7 +23,7 @@
       "vendor/bin/phpunit --no-coverage",
       "vendor/bin/phpcs -p",
       "vendor/bin/psalm --clear-cache",
-      "vendor/bin/psalm --use-baseline=psalm-baseline.xml"
+      "vendor/bin/psalm"
     ],
     "tests": [
       "vendor/bin/phpunit --no-coverage"
